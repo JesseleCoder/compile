@@ -29,7 +29,7 @@ jobs:
       # 4. Build the executable using PyInstaller
       - name: Build executable
         run: |
-          pyinstaller --onefile main.py  # Replace 'your_script.py' with the name of your Python file
+          pyinstaller --onefile src/main.py  # Replace 'your_script.py' with the name of your Python file
 
       # 5. Upload the generated .exe file as an artifact (use v3)
       - name: Upload executable
