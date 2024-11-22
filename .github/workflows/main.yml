@@ -1,0 +1,41 @@
+name: Build Executable with PyInstaller
+
+# Trigger the workflow when there is a push to the main branch
+on:
+  push:
+    branches:
+      - main  # Trigger when you push to the 'main' branch
+
+jobs:
+  build:
+    # The job will run on an Ubuntu environment
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # You can change this to your required Python version
+
+      # 3. Install dependencies (PyInstaller)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      # 4. Build the executable using PyInstaller
+      - name: Build executable
+        run: |
+          pyinstaller --onefile your_script.py  # Replace 'your_script.py' with the name of your Python file
+
+      # 5. Upload the generated .exe file as an artifact
+      - name: Upload executable
+        uses: actions/upload-artifact@v2
+        with:
+          name: executable-file
+          path: dist/your_script  # Replace 'your_script' with the actual name of your file in the 'dist' folder
