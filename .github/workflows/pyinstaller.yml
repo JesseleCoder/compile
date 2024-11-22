@@ -2,12 +2,12 @@ name: Build Executable with PyInstaller
 
 on:
   push:
-    branches: 
+    branches:
       - main  # This will trigger the workflow on every push to the 'main' branch
 
 jobs:
   build:
-    runs-on: windows-latest  # Use a Windows runner
+    runs-on: ubuntu-latest  # This is for Linux or macOS
 
     steps:
       # 1. Checkout the repository
@@ -31,9 +31,14 @@ jobs:
         run: |
           pyinstaller --onefile src/main.py  # Replace 'src/main.py' with your script file
 
-      # 5. Upload the generated executable file as an artifact
+      # 5. Rename the executable (optional step for consistency)
+      - name: Rename executable (optional)
+        run: |
+          mv dist/main dist/main.exe  # Rename the file to 'main.exe'
+
+      # 6. Upload the generated executable file as an artifact
       - name: Upload executable
         uses: actions/upload-artifact@v3  # Updated to v3
         with:
           name: executable-file
-          path: dist/main.exe  # Use the .exe extension for Windows
+          path: dist/main.exe  # Correct path to the renamed executable
