@@ -36,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v3  # Updated to v3
         with:
           name: executable-file
-          path: dist/your_script  # Replace 'your_script' with the actual name of your file in the 'dist' folder
+          path: dist/main.py  # Replace 'your_script' with the actual name of your file in the 'dist' folder
