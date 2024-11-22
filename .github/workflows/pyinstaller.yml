@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # The OS to run the action on. You can also choose macOS or Windows
+    runs-on: windows-latest  # Use a Windows runner
 
     steps:
       # 1. Checkout the repository
@@ -36,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v3  # Updated to v3
         with:
           name: executable-file
-          path: dist/main  # Correct path to the executable in the 'dist' folder
+          path: dist/main.exe  # Use the .exe extension for Windows
