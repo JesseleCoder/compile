@@ -1,43 +1,94 @@
-import tkinter as tk
-from tkinter import messagebox
-import random
+import pygame
+import sys
+from random import randint as int
+# Initialize Pygame
+pygame.init()
+print("DVD.PY running")
+# Constants
+WIDTH, HEIGHT = 800, 400
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Test")
 
+###########################################################
 
-def Think():
-  user_input = Entry.get()
-  if user_input == "":
-    messagebox.showinfo("Error", "Please enter a question.")
-  else:
-   random_number = random.randint(1, 7)
-   if random_number == 1:
-    messagebox.showinfo("Answer", "It is certain.")
-   if random_number == 2:
-    messagebox.showinfo("answer", "It is decidedly so.")
-   if random_number == 3:
-    messagebox.showinfo("answer", "I Dont know.")
-   if random_number == 4:
-    messagebox.showinfo("answer", "I dont think so.")
-   if random_number == 5:
-    messagebox.showinfo("answer", "Dont Count on it")
-   if random_number == 6:
-    messagebox.showinfo("answer", "No")
-   if random_number == 7:
-    messagebox.showinfo("answer", "Yes")
-   
+class DVD:
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.X_V = 1
+        self.Y_V = 1
+        self.color = (255, 0, 0)  # Initial color set to red
 
-root = tk.Tk()
-root.title("8 ball")
-root.geometry("200x100")
-Label = tk.Label(root, text="What do you wish to know?")
-Button = tk.Button(root, text="Ask", command=Think)
-Entry = tk.Entry(root, show="")
-
-user_input = Entry.get()
+    def draw(self, win):    
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))  
 
 
 
-Label.pack()
-Button.pack()
-Entry.pack()
+    def wall(self,X_V,Y_V):
+      ...
+    def move(self):
+      #right
+      if self.x < 0:
+        self.X_V = int(1,5)
+        self.Y_V = int(-5,5)
+        self.x += self.X_V
+        self.color = (int(0,255),int(0,255),int(0,255))
+      #left
+      if self.x > WIDTH:
+        self.X_V = int(-5,-1)
+        self.Y_V = int(-3,3)
+        self.x += self.X_V
+        self.color = (int(0,255),int(0,255),int(0,255))
+      #bottem
+      if self.y > HEIGHT:
+        self.X_V = int(-3,3)
+        self.Y_V = int(-3,-1)
+        self.y += self.X_V
+        self.color = (int(0,255),int(0,255),int(0,255))
+      #top
+      if self.y < 0:
+        self.X_V = int(-3,3)
+        self.Y_V = int(1,3)
+        self.y += self.X_V
+        self.color = (int(0,255),int(0,255),int(0,255))
+      else:
+        self.x += self.X_V
+        self.y += self.Y_V
+        
+     
+      
 
-root.mainloop()
+        
+
+###########################################################
+
+# Function to draw window
+def draw_window(dvd, win):
+    win.fill((0, 0, 0))  # Fill the window with black color
+    dvd.draw(win)
+    pygame.display.update()
+
+def main():
+    clock = pygame.time.Clock()
+    frame_rate = 40
+
+    dvd_data = DVD(100, 100, 25, 25)
+
+    run = True
+    while run:
+        clock.tick(frame_rate)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        
+        dvd_data.move()
+        
+        draw_window(dvd_data, WIN)
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
