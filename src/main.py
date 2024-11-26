@@ -30,6 +30,7 @@ def pick_number():
     if number not in picked_number:
         messagebox.showinfo("BINGO", f"The number is {number}")
         picked_number.append(number)
+        print(picked_number)
 
 # Create the Bingo grid (5x5)
 for row in range(5):
