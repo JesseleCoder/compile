@@ -1,94 +1,52 @@
-import pygame
-import sys
-from random import randint as int
-# Initialize Pygame
-pygame.init()
-print("DVD.PY running")
-# Constants
-WIDTH, HEIGHT = 800, 400
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Test")
+import random
+import tkinter as tk 
+from tkinter import messagebox
 
-###########################################################
+root = tk.Tk()
+root.title("BINGO_TEST_01")
+root.geometry("400x450")
+root.resizable(False, False)
+picked_number = []
 
-class DVD:
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.X_V = 1
-        self.Y_V = 1
-        self.color = (255, 0, 0)  # Initial color set to red
+card = [[0, 0, 0, 0, 0] for _ in range(5)]
 
-    def draw(self, win):    
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))  
+def Card_Data_Change(Row, Column, data):
+    card[Row][Column] = data
+    print(f"Row:{Row} Column:{Column} data:{data}")
 
+def Gen_row(row):
+    for col in range(5):
+        card[row][col] = random.randint(1, 15)
 
+def Gen_card():
+    for row_index in range(5):
+        Gen_row(row_index)
+    Card_Data_Change(2, 2, 0)
 
-    def wall(self,X_V,Y_V):
-      ...
-    def move(self):
-      #right
-      if self.x < 0:
-        self.X_V = int(1,5)
-        self.Y_V = int(-5,5)
-        self.x += self.X_V
-        self.color = (int(0,255),int(0,255),int(0,255))
-      #left
-      if self.x > WIDTH:
-        self.X_V = int(-5,-1)
-        self.Y_V = int(-3,3)
-        self.x += self.X_V
-        self.color = (int(0,255),int(0,255),int(0,255))
-      #bottem
-      if self.y > HEIGHT:
-        self.X_V = int(-3,3)
-        self.Y_V = int(-3,-1)
-        self.y += self.X_V
-        self.color = (int(0,255),int(0,255),int(0,255))
-      #top
-      if self.y < 0:
-        self.X_V = int(-3,3)
-        self.Y_V = int(1,3)
-        self.y += self.X_V
-        self.color = (int(0,255),int(0,255),int(0,255))
-      else:
-        self.x += self.X_V
-        self.y += self.Y_V
-        
-     
-      
+Gen_card()
 
-        
+def pick_number():
+    number = random.randint(1, 15)
+    if number not in picked_number:
+        messagebox.showinfo("BINGO", f"The number is {number}")
+        picked_number.append(number)
 
-###########################################################
+# Create the Bingo grid (5x5)
+for row in range(5):
+    for col in range(5):
+        value = card[row][col]
+        label = tk.Label(root, text=str(value), width=5, height=2, borderwidth=2, relief="solid")
+        label.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
 
-# Function to draw window
-def draw_window(dvd, win):
-    win.fill((0, 0, 0))  # Fill the window with black color
-    dvd.draw(win)
-    pygame.display.update()
+# Add button below the Bingo grid
+button = tk.Button(root, text="Pick Number", command=pick_number)
+button.grid(row=5, column=0, columnspan=5, pady=10)
 
-def main():
-    clock = pygame.time.Clock()
-    frame_rate = 40
+# Configure all rows and columns to have equal weight, including row 5 (button's row)
+for i in range(6):  # Now also include row 5
+    root.grid_rowconfigure(i, weight=1, minsize=50)
 
-    dvd_data = DVD(100, 100, 25, 25)
+for i in range(5):  # Configure columns
+    root.grid_columnconfigure(i, weight=1, minsize=50)
 
-    run = True
-    while run:
-        clock.tick(frame_rate)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-        
-        dvd_data.move()
-        
-        draw_window(dvd_data, WIN)
-
-    pygame.quit()
-    sys.exit()
-
-if __name__ == "__main__":
-    main()
+root.mainloop()
