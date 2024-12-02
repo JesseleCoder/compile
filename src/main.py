@@ -1,53 +1,127 @@
 import random
-import tkinter as tk 
+import tkinter as tk
 from tkinter import messagebox
 
-root = tk.Tk()
-root.title("BINGO_TEST_01")
-root.geometry("400x450")
-root.resizable(False, False)
-picked_number = []
+Cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+Deck = Cards * 4
+random.shuffle(Deck)
+Dealer = []
+Player = []
+toprint = []
 
-card = [[0, 0, 0, 0, 0] for _ in range(5)]
+def deal(Deck):
+    for i in range(2):
+        Dealer.append(Deck.pop())
+        Player.append(Deck.pop())
+    return Dealer, Player
 
-def Card_Data_Change(Row, Column, data):
-    card[Row][Column] = data
-    print(f"Row:{Row} Column:{Column} data:{data}")
+# Adjust the Getcardvalue function to handle Ace doing stuff, starting as 11 or 1 based on total
 
-def Gen_row(row):
-    for col in range(5):
-        card[row][col] = random.randint(1, 15)
+def Getcardvalue(card, current_total=0):
+    if card == 11 or card == 12 or card == 13:
+        return 10
+    elif card == 14:
+        if current_total + 11 > 21:
+            return 1
+        else:
+            return 11
+    else:
+        return card
 
-def Gen_card():
-    for row_index in range(5):
-        Gen_row(row_index)
-    Card_Data_Change(2, 2, 0)
 
-Gen_card()
+def Getcardname(card):
+    if card == 11:
+        return "Jack"
 
-def pick_number():
-    number = random.randint(1, 15)
-    if number not in picked_number:
-        messagebox.showinfo("BINGO", f"The number is {number}")
-        picked_number.append(number)
-        print(picked_number)
+    elif card == 12:
+        return "Queen"
 
-# Create the Bingo grid (5x5)
-for row in range(5):
-    for col in range(5):
-        value = card[row][col]
-        label = tk.Label(root, text=str(value), width=5, height=2, borderwidth=2, relief="solid")
-        label.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+    elif card == 13:
+        return "King"
 
-# Add button below the Bingo grid
-button = tk.Button(root, text="Pick Number", command=pick_number)
-button.grid(row=5, column=0, columnspan=5, pady=10)
+    elif card == 14:
+        return "Ace"
 
-# Configure all rows and columns to have equal weight, including row 5 (button's row)
-for i in range(6):  # Now also include row 5
-    root.grid_rowconfigure(i, weight=1, minsize=50)
+    else:
+        return str(card)
 
-for i in range(5):  # Configure columns
-    root.grid_columnconfigure(i, weight=1, minsize=50)
 
-root.mainloop()
+# Modify Total to consider the Ace special behavior
+
+def Total(Hand):
+    total = 0
+    aces_count = 0
+    for card in Hand:
+        if card == 14:
+            aces_count += 1
+        total += Getcardvalue(card, total)
+    while total > 21 and aces_count > 0:
+        total -= 10  # Adjust for Ace being 1 instead of 11
+        aces_count -= 1
+    return total
+
+
+def PrintHand(Hand):
+    toprint.clear()  # Clear previous hand names
+    for card in Hand:
+        toprint.append(Getcardname(card))
+
+    return toprint  # Return the list of card names
+
+
+def Hit(Hand):
+    Hand.append(Deck.pop())
+    return Hand
+
+
+def Check(Hand):
+    if Total(Hand) == 21:
+        return True
+    else:
+        return False
+
+
+def printgame(Dealer, Player):
+    # print(f"Dealer's Hand: {PrintHand(Dealer)}")
+    print(f"Player's Hand: {PrintHand(Player)}")
+
+
+def DealerTurn(Dealer):
+    while Total(Dealer) < 17: #random.randint(5, 19):
+        Hit(Dealer)
+        printgame(Dealer, Player)
+        if Total(Dealer) > 21:  # Check if dealer busts
+            print("Dealer Bust!")
+            break
+
+
+def plrturn(Player):
+    while True:
+        choice = input("Hit or Stand? ")
+        if choice.lower() == "hit":
+            Hit(Player)
+            printgame(Dealer, Player)
+            if Total(Player) > 21:
+                print("Bust! Dealer wins!")
+                break
+
+        elif choice.lower() == "stand":
+            print("Player stands.")
+          
+            DealerTurn(Dealer)
+            print(f"Dealer's Hand: {PrintHand(Dealer)}")
+            print(f"Player's Hand: {PrintHand(Player)}")
+            if Total(Dealer) > 21:
+                print("Dealer busts! Player wins!")
+            elif Total(Dealer) > Total(Player):
+                print("Dealer wins!")
+            elif Total(Dealer) < Total(Player):
+                print("Player wins!")
+            else:
+                print("MESSAGE.GAME_END")
+            break  # End loop after player stands
+        else:
+            print("Invalid input")
+deal(Deck)
+printgame(Dealer, Player)
+plrturn(Player)
