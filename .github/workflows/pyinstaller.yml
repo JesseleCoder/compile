@@ -1,4 +1,3 @@
-
 name: Package Application with Pyinstaller
 
 on:
@@ -26,10 +25,11 @@ jobs:
         
     - name: Build with PyInstaller
       run: |
+        dir
         pyinstaller --onefile --noconsole --hidden-import customtkinter --hidden-import pygame main.py
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: windows-executable
-        path: dist/main.exe
+        path: dist/*.exe
