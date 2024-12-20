@@ -1,127 +1,42 @@
-import random
-import tkinter as tk
-from tkinter import messagebox
+import customtkinter as ctk
+from WINDOWS import Temperature as temp
+from WINDOWS import RAINBOW as rain
+from WINDOWS import Dist as dist
+from WINDOWS import MASS as time8
+from WINDOWS import Test_BG as test
 
-Cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-Deck = Cards * 4
-random.shuffle(Deck)
-Dealer = []
-Player = []
-toprint = []
+root = ctk.CTk()
+root.geometry("400x400")
+root.title("CustomTkinter")
 
-def deal(Deck):
-    for i in range(2):
-        Dealer.append(Deck.pop())
-        Player.append(Deck.pop())
-    return Dealer, Player
+def setup(R,C):
+  for i in range(R):
+    root.grid_rowconfigure(i, weight=1)
+  for i in range(C):
+    root.grid_columnconfigure(i, weight=1)
+setup(5,5)
+    
 
-# Adjust the Getcardvalue function to handle Ace doing stuff, starting as 11 or 1 based on total
-
-def Getcardvalue(card, current_total=0):
-    if card == 11 or card == 12 or card == 13:
-        return 10
-    elif card == 14:
-        if current_total + 11 > 21:
-            return 1
-        else:
-            return 11
-    else:
-        return card
+lable = ctk.CTkLabel(root, text="Unit Converter")
+lable.grid(row=0, column=2)
 
 
-def Getcardname(card):
-    if card == 11:
-        return "Jack"
+temp_button = ctk.CTkButton(root, text="Temperature", command=lambda: temp.setup(root))
+temp_button.grid(row=0, column=2)
 
-    elif card == 12:
-        return "Queen"
+rain_button = ctk.CTkButton(root, text="Rainbow", command=lambda: rain.setup(root))
+rain_button.grid(row=2, column=2)
 
-    elif card == 13:
-        return "King"
+dist_button = ctk.CTkButton(root, text="Distance", command=lambda: dist.setup(root))
+dist_button.grid(row=1, column=2)
 
-    elif card == 14:
-        return "Ace"
+useless = ctk.CTkButton(root, text="Mass", command=lambda: time8.setup(root))
+useless.grid(row=1, column=1)
 
-    else:
-        return str(card)
-
-
-# Modify Total to consider the Ace special behavior
-
-def Total(Hand):
-    total = 0
-    aces_count = 0
-    for card in Hand:
-        if card == 14:
-            aces_count += 1
-        total += Getcardvalue(card, total)
-    while total > 21 and aces_count > 0:
-        total -= 10  # Adjust for Ace being 1 instead of 11
-        aces_count -= 1
-    return total
+test_BG = ctk.CTkButton(root, text="Test", command=lambda: test.setup(root))
+test_BG.grid(row=2, column=1)
 
 
-def PrintHand(Hand):
-    toprint.clear()  # Clear previous hand names
-    for card in Hand:
-        toprint.append(Getcardname(card))
-
-    return toprint  # Return the list of card names
 
 
-def Hit(Hand):
-    Hand.append(Deck.pop())
-    return Hand
-
-
-def Check(Hand):
-    if Total(Hand) == 21:
-        return True
-    else:
-        return False
-
-
-def printgame(Dealer, Player):
-    # print(f"Dealer's Hand: {PrintHand(Dealer)}")
-    print(f"Player's Hand: {PrintHand(Player)}")
-
-
-def DealerTurn(Dealer):
-    while Total(Dealer) < 17: #random.randint(5, 19):
-        Hit(Dealer)
-        printgame(Dealer, Player)
-        if Total(Dealer) > 21:  # Check if dealer busts
-            print("Dealer Bust!")
-            break
-
-
-def plrturn(Player):
-    while True:
-        choice = input("Hit or Stand? ")
-        if choice.lower() == "hit":
-            Hit(Player)
-            printgame(Dealer, Player)
-            if Total(Player) > 21:
-                print("Bust! Dealer wins!")
-                break
-
-        elif choice.lower() == "stand":
-            print("Player stands.")
-          
-            DealerTurn(Dealer)
-            print(f"Dealer's Hand: {PrintHand(Dealer)}")
-            print(f"Player's Hand: {PrintHand(Player)}")
-            if Total(Dealer) > 21:
-                print("Dealer busts! Player wins!")
-            elif Total(Dealer) > Total(Player):
-                print("Dealer wins!")
-            elif Total(Dealer) < Total(Player):
-                print("Player wins!")
-            else:
-                print("MESSAGE.GAME_END")
-            break  # End loop after player stands
-        else:
-            print("Invalid input")
-deal(Deck)
-printgame(Dealer, Player)
-plrturn(Player)
+root.mainloop()
