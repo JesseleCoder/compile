@@ -1,39 +1,34 @@
-name: Build Executable with PyInstaller
+name: Package Application with Pyinstaller
 
 on:
   push:
-    branches:
-      - main  # This will trigger the workflow on every push to the 'main' branch
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: windows-latest  # Use a Windows runner
+    runs-on: windows-latest
 
     steps:
-      # 1. Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v2  # Checks out your repository's code
-
-      # 2. Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'  # You can change this to your required Python version
-
-      # 3. Install dependencies (PyInstaller)
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller
-
-      # 4. Build the executable using PyInstaller
-      - name: Build executable
-        run: |
-          pyinstaller --onefile src/main.py  # Replace 'src/main.py' with your script file
-
-      # 5. Upload the generated executable file as an artifact
-      - name: Upload executable
-        uses: actions/upload-artifact@v3  # Updated to v3
-        with:
-          name: executable-file
-          path: dist/main.exe  # Use the .exe extension for Windows
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller customtkinter pygame
+        
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --onefile --noconsole --hidden-import customtkinter --hidden-import pygame main.py
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-executable
+        path: dist/main.exe
