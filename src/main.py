@@ -3,7 +3,7 @@ from WINDOWS import Temperature as temp
 from WINDOWS import RAINBOW as rain
 from WINDOWS import Dist as dist
 from WINDOWS import MASS as time8
-from WINDOWS import Test_BG as test
+
 
 root = ctk.CTk()
 root.geometry("400x400")
@@ -31,10 +31,9 @@ dist_button = ctk.CTkButton(root, text="Distance", command=lambda: dist.setup(ro
 dist_button.grid(row=1, column=2)
 
 useless = ctk.CTkButton(root, text="Mass", command=lambda: time8.setup(root))
-useless.grid(row=1, column=1)
+useless.grid(row=3, column=2)
 
-test_BG = ctk.CTkButton(root, text="Test", command=lambda: test.setup(root))
-test_BG.grid(row=2, column=1)
+
 
 
 
