@@ -63,6 +63,8 @@ def convert_to_meter(num, unit):
         num = float(num) * 1.67e-15  # Approximate size of a proton/neutron in meters
     elif unit == "Black Hole Earth Radius":
         num = float(num) * 8.87e-3  # Schwarzschild radius in meters (approximate)
+    elif unit == "Miles":
+      num = float(num) * 1609.34  # 1 mile = 1609.34 meters
     else:
         print("Unknown unit!")
         return None  # If the unit is not recognized
