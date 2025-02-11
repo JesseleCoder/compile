@@ -1,66 +1,117 @@
-import os 
-import sys
-import time
-import subprocess
+import pygame
 import random
+import threading
+
+pygame.init()
+# Set up the display
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Rainbow")
+
+def random_color():
+  return (random.randint(50, 255), random.randint(50, 255), random.randint(50, 255))
 
 
-def progressbar():
-  P1 = "[#][_][_][_][_]"
-  P2 = "[#][#][_][_][_]"
-  P3 = "[#][#][#][_][_]"
-  P4 = "[#][#][#][#][_]"
-  P5 = "[#][#][#][#][#]"
+def noise(Input):
+  if Input < 50:
+    result = Input + random.randint(0, 0)
+  else:
+    result = Input + random.randint(0, 0)
+  return max(50, min(255, result))
 
-  # Print each progress state, overwrite the previous one
-  for P in [P1, P2, P3, P4, P5]:
-      sys.stdout.write(f"\r{P}")  # \r moves the cursor to the start of the line
-      sys.stdout.flush()  # Force the output to be written immediately
-      time.sleep(0.5)  # Wait for a moment before updating
-  print(" ")
 
-def makefile():
-  print("Making file...")
-  time.sleep(0.5)
-  progressbar()
-  
-  for _ in range(30):
-    line = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=30))
-    print(line)
-    
-    
-    
+class Rainbow():
+    def __init__(self, x, y,GX,GY):
+        self.x = x
+        self.y = y
+        self.GX = GX
+        self.GY = GY
+        self.color = random_color()
+        self.buds = [] #buds means buddys 
+        self.blend_lock = threading.Lock()
+
+
+    def draw(self):
+      pygame.draw.rect(screen, self.color, (self.x, self.y, 5, 5))
 
 
 
-print("SYSTEM ERROR : UNKNOWN")
-print("OS.SYSTEM.REPAIR : IDENTIFYING ERROR")
-progressbar()
-print("ERROR IDENTIFIED : SYSTEM ERROR : FILE MISSING")
-print("FILE DIRECTORY NOT FOUND")
-print("C:/WINDOWS/SYSTEM32/winfix.dll")
-print("Repairing...")
-makefile()
-print("FILE MADE AT C:/WINDOWS/SYSTEM32/winfix.dll")
-print("Repair of FILE has been completed")
-print("To Finish the Repair Windows Must restart")
-if input("Would you like to restart? (Y/N) ").capitalize() == "Y":
-  print("Restarting...")
-  time.sleep(3)
-  os.system('shutdown /s /f /t 0')
+    def get_color(self):
+      return self.color
 
-else:
-  print("System Repair Complete")
-  print("Repair Trigger")
-  print("SYSTEM : SYSTEM FILE MISSING")
-  print("Windows was unable to find a critical system file")
-  print("Do Not Close This Window!")
-  print("Windows is scanning for errors in the backround if a error is found the system will restart")
-  time.sleep(5)
-  print("ERROR FOUND : RUNTIME ERROR")
-  for _ in range(30):
-    line = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=30))
-    print(line)
-  os.system('shutdown /s /f /t 0')
-  
-  
+    def get_buds(self):
+      if self.GY + 1 < len(grid):
+        self.buds.append(grid[self.GY + 1][self.GX])
+      if self.GY - 1 >= 0:
+        self.buds.append(grid[self.GY - 1][self.GX])
+      if self.GX + 1 < len(grid[0]):
+        self.buds.append(grid[self.GY][self.GX + 1])
+      if self.GX - 1 >= 0:
+        self.buds.append(grid[self.GY][self.GX - 1])
+      #print(self.buds)
+
+
+    def blend(self):
+      with self.blend_lock:
+        if random.random() < 0.1:  # Only blend 10% of the time
+            bud_color_1 = []
+            bud_color_2 = []
+            bud_color_3 = []
+            for bud in self.buds:
+                bud_color_1.append(bud.get_color()[0])
+                bud_color_2.append(bud.get_color()[1])
+                bud_color_3.append(bud.get_color()[2])
+            self.color = (
+                noise(random.choice(bud_color_1)),
+                noise(random.choice(bud_color_2)),
+                noise(random.choice(bud_color_3))
+              )
+
+
+
+
+
+
+
+
+
+
+
+E = []
+grid_width = screen.get_width() // 5
+grid_height = screen.get_height() // 5
+grid = []
+for _ in range(grid_height):
+    grid.append([None] * grid_width)
+
+for j in range(grid_height):
+  for i in range(grid_width):
+      rainbow = Rainbow(i * 5, j * 5, i, j)
+      grid[j][i] = rainbow
+      E.append(rainbow)
+
+
+for i in E:
+  i.get_buds()
+
+running = True
+clock = pygame.time.Clock()
+
+# Thread to handle blending
+def blend_thread():
+
+    while running:
+        for i in E:
+            i.blend()
+blend_threead = threading.Thread(target=blend_thread)
+blend_threead.start()
+
+pygame.time.wait(2000)
+while running:
+
+    screen.fill((0, 0, 0))
+    for i in E:
+        i.draw()
+    pygame.display.flip()
+    clock.tick(50)
+
+pygame.quit()
